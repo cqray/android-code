@@ -232,7 +232,7 @@ public final class ActivityUtils {
     public static Activity requireCurrent() {
         Activity act = getCurrent();
         if (act == null) {
-            throw new IllegalStateException("Please make sure that there is alive activity there.");
+            throw new IllegalStateException("Please make sure that there have alive activity.");
         }
         return act;
     }

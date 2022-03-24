@@ -20,6 +20,6 @@ public class ResUtils {
 
     public static int getIdByName(String name, String defType) {
         String packageName = Utils.getContext().getPackageName();
-        return Utils.getResources().getIdentifier(name, defType, packageName);
+        return Utils.getContext().getResources().getIdentifier(name, defType, packageName);
     }
 }
