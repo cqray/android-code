@@ -2,6 +2,7 @@ package cn.cqray.android.util;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 
 import androidx.annotation.NonNull;
 
@@ -28,5 +29,9 @@ public class Utils {
         } else {
             return ActivityUtils.getCurrent();
         }
+    }
+
+    public static Resources getResources() {
+        return getContext().getResources();
     }
 }
