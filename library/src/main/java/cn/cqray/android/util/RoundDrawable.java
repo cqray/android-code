@@ -47,8 +47,11 @@ public class RoundDrawable extends Drawable {
         float radius = 60;
         float[] radii = new float[8];
         for (int i = 0; i < 8; i++) {
-            radii[i] = 10;
+            radii[i] = 60;
         }
+
+        radii[2] = 30;
+        radii[3] = 60;
 
         Path path = new Path();
         RectF rect = new RectF(0, 0, 300, 300 );
