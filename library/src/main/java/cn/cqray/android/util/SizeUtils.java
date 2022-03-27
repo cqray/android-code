@@ -92,21 +92,22 @@ public class SizeUtils {
      * @return The complex floating point value multiplied by the appropriate
      * metrics depending on its unit.
      */
-    public static float applyDimension(final float value, final int unit) {
+    public static float applyDimension(final float value, SizeUnit unit) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         switch (unit) {
-            case TypedValue.COMPLEX_UNIT_PX:
+            case PX:
                 return value;
-            case TypedValue.COMPLEX_UNIT_DIP:
+            case DP:
                 return value * metrics.density;
-            case TypedValue.COMPLEX_UNIT_SP:
+            case SP:
                 return value * metrics.scaledDensity;
-            case TypedValue.COMPLEX_UNIT_PT:
+            case PT:
                 return value * metrics.xdpi * (1.0f / 72);
-            case TypedValue.COMPLEX_UNIT_IN:
+            case IN:
                 return value * metrics.xdpi;
-            case TypedValue.COMPLEX_UNIT_MM:
+            case MM:
                 return value * metrics.xdpi * (1.0f / 25.4f);
+            default:
         }
         return 0;
     }
