@@ -103,6 +103,31 @@ public class ViewDelegate<T extends View>  {
         mView.setValue(view);
     }
 
+    public void setPadding(float left, float top, float right, float bottom) {
+        setPadding(left, top, right, bottom, SizeUnit.DP);
+    }
+
+    public void setPadding(float left, float top, float right, float bottom, SizeUnit unit) {
+        float[] array = new float[4];
+        array[0] = SizeUtils.applyDimension(left, unit);
+        array[1] = SizeUtils.applyDimension(top, unit);
+        array[2] = SizeUtils.applyDimension(right, unit);
+        array[3] = SizeUtils.applyDimension(bottom, unit);
+        mPadding.setValue(array);
+    }
+
+    public void setPadding(float padding) {
+        setPadding(padding, SizeUnit.DP);
+    }
+
+    public void setPadding(float padding, SizeUnit unit) {
+        float[] array = new float[4];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = SizeUtils.applyDimension(padding, unit);
+        }
+        mPadding.setValue(array);
+    }
+
     /**
      * 设置控件宽度
      * <p>默认单位DP</p>
