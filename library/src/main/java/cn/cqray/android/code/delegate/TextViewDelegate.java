@@ -13,12 +13,13 @@ import androidx.lifecycle.LifecycleOwner;
 import cn.cqray.android.code.lifecycle.SimpleLiveData;
 import cn.cqray.android.code.util.SizeUnit;
 import cn.cqray.android.code.util.SizeUtils;
-import cn.cqray.android.code.util.Utils;
 
 public class TextViewDelegate extends ViewDelegate<TextView> {
 
     /** 文本 **/
     protected final SimpleLiveData<CharSequence> mText = new SimpleLiveData<>();
+    /** 文本资源 **/
+    protected final SimpleLiveData<Integer> mTextRes = new SimpleLiveData<>();
     /** 文本颜色 **/
     protected final SimpleLiveData<ColorStateList> mTextColor = new SimpleLiveData<>();
     /** 文本大小 **/
@@ -33,6 +34,7 @@ public class TextViewDelegate extends ViewDelegate<TextView> {
         super.setView(owner, view);
         // 设置文本变化监听
         mText.observe(owner, charSequence -> post(() -> requireView().setText(charSequence)));
+        mTextRes.observe(owner, aInt -> post(() -> requireView().setText(aInt)));
         // 设置文本颜色变化监听
         mTextColor.observe(owner, colorStateList -> post(() -> requireView().setTextColor(colorStateList)));
         // 设置文本大小变化监听
@@ -44,7 +46,7 @@ public class TextViewDelegate extends ViewDelegate<TextView> {
     }
 
     public void setText(@StringRes int resId) {
-        mText.setValue(Utils.getResources().getString(resId));
+        mTextRes.setValue(resId);
     }
 
     public void setText(CharSequence content) {
