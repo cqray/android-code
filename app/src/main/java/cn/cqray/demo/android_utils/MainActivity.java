@@ -19,6 +19,7 @@ import cn.cqray.android.code.delegate.ViewDelegate;
 
 public class MainActivity extends AppCompatActivity {
 
+     ViewDelegate delegate = new ViewDelegate(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,12 +30,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         View view = findViewById(R.id.tv);
-        ViewDelegate<View> delegate = new ViewDelegate<>();
         delegate.setBackground(ContextCompat.getDrawable(this, R.color.colorPrimary));
         delegate.setRadius(10);
         delegate.setWidth(200);
         delegate.setHeight(40);
-        delegate.setView(this, view);
+        delegate.setView(view);
 
 
         float size = SizeUtils.get(ResUtils.getDimenIdByName("content"));
@@ -43,19 +43,4 @@ public class MainActivity extends AppCompatActivity {
         Log.e("数据", "大小：" + ResUtils.dp2px(150));
     }
 
-    private Bitmap drawableToBitmap(Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            BitmapDrawable bd = (BitmapDrawable) drawable;
-            return bd.getBitmap();
-        }
-        int w = drawable.getIntrinsicWidth();
-        int h = drawable.getIntrinsicHeight();
-        w = w <= 0 ? 300 : w;
-        h = h <= 0 ? 300 : h;
-        Bitmap bm = Bitmap.createBitmap(w, h, Bitmap.Config.ALPHA_8);
-        Canvas canvas = new Canvas(bm);//将Bitmap对象放到画布里面
-        drawable.setBounds(0, 0, w, h);
-        drawable.draw(canvas);//将drawble画到画布上
-        return bm;
-    }
 }

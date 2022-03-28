@@ -1,9 +1,12 @@
 package cn.cqray.android.code.delegate;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,6 +15,10 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
 import java.util.LinkedList;
@@ -26,10 +33,16 @@ import cn.cqray.android.code.util.Utils;
  * 控件相关操作委托
  * @author Cqray
  */
-public class ViewDelegate<T extends View>  {
+public class ViewDelegate<T extends View> {
 
     /** 圆角数量 **/
     private static final int RADII_LENGTH = 8;
+    /** Fragment **/
+    protected final Fragment mFragment;
+    /** Activity **/
+    protected final FragmentActivity mActivity;
+    /** Handler句柄 **/
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     /** 圆角 **/
     protected final float[] mBackgroundRadii = new float[RADII_LENGTH];
     /** 任务集合 **/
@@ -49,10 +62,28 @@ public class ViewDelegate<T extends View>  {
     /** 背景资源 **/
     protected final SimpleLiveData<Integer> mBackgroundRes = new SimpleLiveData<>();
 
-    public void setView(LifecycleOwner owner, T view) {
-        mView.observe(owner, v -> {
+    public ViewDelegate(Fragment fragment) {
+        mFragment = fragment;
+        mActivity = null;
+        mHandler.post(() -> mFragment.getLifecycle().addObserver((LifecycleEventObserver) this::onStateChanged));
+    }
 
-        });
+    public ViewDelegate(FragmentActivity activity) {
+        mFragment = null;
+        mActivity = activity;
+        mHandler.post(() -> mActivity.getLifecycle().addObserver((LifecycleEventObserver) this::onStateChanged));
+    }
+
+    protected void onStateChanged(@NonNull LifecycleOwner owner, @NonNull Lifecycle.Event event) {
+        if (event == Lifecycle.Event.ON_CREATE) {
+            onCreate(owner);
+        } else if (event == Lifecycle.Event.ON_DESTROY) {
+            onDestroy(owner);
+        }
+    }
+
+    protected void onCreate(@NonNull LifecycleOwner owner) {
+        mView.observe(owner, v -> post(() -> {}));
         // 控件显示状态监听
         mVisibility.observe(owner, aInt -> post(() -> requireView().setVisibility(aInt)));
         // 宽度变化监听
@@ -99,7 +130,38 @@ public class ViewDelegate<T extends View>  {
             Drawable drawable = ContextCompat.getDrawable(Utils.getContext(), aInt);
             mBackground.setValue(drawable);
         });
-        // 绑定控件
+    }
+
+    protected void onDestroy(@NonNull LifecycleOwner owner) {
+
+    }
+
+    @NonNull
+    public LifecycleOwner getLifecycle() {
+        if (mFragment != null) {
+            return mFragment;
+        } else {
+            assert mActivity != null;
+            return mActivity;
+        }
+    }
+
+    @NonNull
+    public FragmentActivity requireActivity() {
+        if (mFragment != null) {
+            return mFragment.requireActivity();
+        } else {
+            assert mActivity != null;
+            return mActivity;
+        }
+    }
+
+    @NonNull
+    public Context requireContext() {
+        return requireActivity();
+    }
+
+    public void setView(T view) {
         mView.setValue(view);
     }
 
@@ -277,4 +339,5 @@ public class ViewDelegate<T extends View>  {
         }
         return view;
     }
+
 }

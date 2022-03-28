@@ -7,7 +7,10 @@ import android.util.TypedValue;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 
 import cn.cqray.android.code.lifecycle.SimpleLiveData;
@@ -29,9 +32,17 @@ public class TextViewDelegate extends ViewDelegate<TextView> {
     /** 文本位置 **/
     protected final SimpleLiveData<Integer> mGravity = new SimpleLiveData<>();
 
+    public TextViewDelegate(Fragment fragment) {
+        super(fragment);
+    }
+
+    public TextViewDelegate(FragmentActivity activity) {
+        super(activity);
+    }
+
     @Override
-    public void setView(LifecycleOwner owner, TextView view) {
-        super.setView(owner, view);
+    protected void onCreate(@NonNull LifecycleOwner owner) {
+        super.onCreate(owner);
         // 设置文本变化监听
         mText.observe(owner, charSequence -> post(() -> requireView().setText(charSequence)));
         mTextRes.observe(owner, aInt -> post(() -> requireView().setText(aInt)));
