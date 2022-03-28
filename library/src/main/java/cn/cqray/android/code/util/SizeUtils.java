@@ -1,4 +1,4 @@
-package cn.cqray.android.util;
+package cn.cqray.android.code.util;
 
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
@@ -24,8 +24,19 @@ public class SizeUtils {
         }
     }
 
+
     public static int get(@DimenRes int resId) {
-        return (int) get(SizeUnit.PX, resId);
+        return (int) get(resId, SizeUnit.PX);
+    }
+
+    public static float get(@DimenRes int resId, SizeUnit unit) {
+        float size = Utils.getResources().getDimensionPixelSize(resId);
+        if (unit == SizeUnit.PX) {
+            return size;
+        } else {
+            float density = Utils.getResources().getDisplayMetrics().density;
+            return size / density;
+        }
     }
 
 //    public static int dp2px(float dp) {

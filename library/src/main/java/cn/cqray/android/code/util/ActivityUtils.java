@@ -1,4 +1,4 @@
-package cn.cqray.android.util;
+package cn.cqray.android.code.util;
 
 import android.app.Activity;
 import android.app.Application;

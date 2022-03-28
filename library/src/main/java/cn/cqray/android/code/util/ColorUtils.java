@@ -1,4 +1,4 @@
-package cn.cqray.android.util;
+package cn.cqray.android.code.util;
 
 import android.graphics.Color;
 
@@ -8,6 +8,8 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
+import cn.cqray.android.code.util.Utils;
 
 public class ColorUtils {
 

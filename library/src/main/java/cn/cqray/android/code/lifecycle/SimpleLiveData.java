@@ -1,4 +1,4 @@
-package cn.cqray.android.util.dd;
+package cn.cqray.android.code.lifecycle;
 
 import android.os.Looper;
 

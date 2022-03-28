@@ -1,4 +1,4 @@
-package cn.cqray.android.util;
+package cn.cqray.android.code.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -87,10 +87,10 @@ public class ViewUtils {
             if (unit == SizeUnit.PX) {
                 params.setMargins((int) left, (int) top, (int) right, (int) bottom);
             } else {
-                params.leftMargin = DimenUtils.dp2px(left);
-                params.topMargin = DimenUtils.dp2px(top);
-                params.rightMargin = DimenUtils.dp2px(right);
-                params.bottomMargin = DimenUtils.dp2px(bottom);
+                params.leftMargin = SizeUtils.dp2px(left);
+                params.topMargin = SizeUtils.dp2px(top);
+                params.rightMargin = SizeUtils.dp2px(right);
+                params.bottomMargin = SizeUtils.dp2px(bottom);
             }
         }
     }
@@ -132,7 +132,7 @@ public class ViewUtils {
      * @param resId 资源ID
      */
     public static void setMarginRes(View view, @DimenRes int resId) {
-        float margin = DimenUtils.getSize(SizeUnit.PX, resId);
+        float margin = SizeUtils.get(resId, SizeUnit.PX);
         setMargin(view, SizeUnit.PX, margin);
     }
 

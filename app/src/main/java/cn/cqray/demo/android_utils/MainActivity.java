@@ -1,21 +1,21 @@
 package cn.cqray.demo.android_utils;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
-import cn.cqray.android.util.ButterKnifeUtils;
-import cn.cqray.android.util.ResUtils;
-import cn.cqray.android.util.RoundDrawable;
-import cn.cqray.android.util.SizeUtils;
-import cn.cqray.android.util.Utils;
+import cn.cqray.android.code.util.ButterKnifeUtils;
+import cn.cqray.android.code.util.ResUtils;
+import cn.cqray.android.code.util.SizeUtils;
+import cn.cqray.android.code.util.Utils;
+import cn.cqray.android.code.delegate.ViewDelegate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,15 +28,19 @@ public class MainActivity extends AppCompatActivity {
         Utils.initialize(getApplication());
 
 
-        RoundDrawable drawable = new RoundDrawable(drawableToBitmap(new ColorDrawable(Color.YELLOW)));
-
-        findViewById(R.id.tv).setBackground(drawable);
+        View view = findViewById(R.id.tv);
+        ViewDelegate<View> delegate = new ViewDelegate<>();
+        delegate.setBackground(ContextCompat.getDrawable(this, R.color.colorPrimary));
+        delegate.setRadius(10);
+        delegate.setWidth(200);
+        delegate.setHeight(40);
+        delegate.setView(this, view);
 
 
         float size = SizeUtils.get(ResUtils.getDimenIdByName("content"));
 
         Log.e("数据", "大小：" + size);
-        Log.e("数据", "大小：" + ResUtils.dp2px(20));
+        Log.e("数据", "大小：" + ResUtils.dp2px(150));
     }
 
     private Bitmap drawableToBitmap(Drawable drawable) {

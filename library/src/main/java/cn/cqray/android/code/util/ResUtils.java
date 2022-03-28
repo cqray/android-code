@@ -1,7 +1,6 @@
-package cn.cqray.android.util;
+package cn.cqray.android.code.util;
 
 import androidx.annotation.ColorRes;
-import androidx.annotation.DimenRes;
 import androidx.core.content.ContextCompat;
 
 public class ResUtils {
@@ -26,8 +25,6 @@ public class ResUtils {
         String packageName = Utils.getContext().getPackageName();
         return Utils.getContext().getResources().getIdentifier(name, defType, packageName);
     }
-
-
 
     public static int dp2px(float dp) {
         float density = Utils.getResources().getDisplayMetrics().density;
