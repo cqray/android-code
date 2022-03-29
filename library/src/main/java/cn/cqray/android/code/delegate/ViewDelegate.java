@@ -43,8 +43,6 @@ public class ViewDelegate<T extends View> {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     /** 圆角 **/
     protected final float[] mBackgroundRadii = new float[RADII_LENGTH];
-    /** 控件 **/
-    protected final SimpleLiveData<T> mView = new SimpleLiveData<>();
     /** 间隔 **/
     protected final SimpleLiveData<float[]> mPadding = new SimpleLiveData<>();
     /** 显示 **/
@@ -124,23 +122,21 @@ public class ViewDelegate<T extends View> {
         });
         // 设置背景变化监听
         mBackground.observe(owner, drawable -> {
-            View v = mView.getValue();
-            assert v != null;
             if (drawable == null) {
                 // 不设置背景
-                ViewCompat.setBackground(v, null);
+                ViewCompat.setBackground(view, null);
             } else if (drawable instanceof ColorDrawable) {
                 // 纯色背景设置圆角
                 int color = ((ColorDrawable) drawable).getColor();
                 GradientDrawable background = new GradientDrawable();
                 background.setColor(color);
                 background.setCornerRadii(mBackgroundRadii);
-                ViewCompat.setBackground(v, background);
+                ViewCompat.setBackground(view, background);
             } else {
                 // 图片背景设置圆角
                 RoundDrawable background = new RoundDrawable(drawable);
                 background.setRadii(mBackgroundRadii, SizeUnit.PX);
-                ViewCompat.setBackground(v, background);
+                ViewCompat.setBackground(view, background);
             }
         });
         // 设置背景资源变化监听
