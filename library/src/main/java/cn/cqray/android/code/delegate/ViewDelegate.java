@@ -21,8 +21,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import java.util.LinkedList;
-
 import cn.cqray.android.code.graphics.RoundDrawable;
 import cn.cqray.android.code.lifecycle.SimpleLiveData;
 import cn.cqray.android.code.util.SizeUnit;
@@ -45,8 +43,6 @@ public class ViewDelegate<T extends View> {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     /** 圆角 **/
     protected final float[] mBackgroundRadii = new float[RADII_LENGTH];
-    /** 任务集合 **/
-    protected final LinkedList<Runnable> mActions = new LinkedList<>();
     /** 控件 **/
     protected final SimpleLiveData<T> mView = new SimpleLiveData<>();
     /** 间隔 **/
@@ -127,7 +123,7 @@ public class ViewDelegate<T extends View> {
             view.setLayoutParams(params);
         });
         // 设置背景变化监听
-        mBackground.observe(owner, drawable -> post(() -> {
+        mBackground.observe(owner, drawable -> {
             View v = mView.getValue();
             assert v != null;
             if (drawable == null) {
@@ -146,7 +142,7 @@ public class ViewDelegate<T extends View> {
                 background.setRadii(mBackgroundRadii, SizeUnit.PX);
                 ViewCompat.setBackground(v, background);
             }
-        }));
+        });
         // 设置背景资源变化监听
         mBackgroundResource.observe(owner, aInt -> {
             Drawable drawable = ContextCompat.getDrawable(Utils.getContext(), aInt);
@@ -299,22 +295,6 @@ public class ViewDelegate<T extends View> {
 
     public void setBackgroundResource(@DrawableRes int resId) {
         mBackgroundResource.setValue(resId);
-    }
-
-    /**
-     * 执行任务，若未绑定View，则缓存任务，绑定后再执行
-     * @param action 任务
-     */
-    protected final synchronized void post(Runnable action) {
-        if (mView.getValue() == null) {
-            mActions.add(action);
-        } else {
-            mActions.add(action);
-            for (Runnable r : mActions) {
-                r.run();
-            }
-            mActions.clear();
-        }
     }
 
 }
