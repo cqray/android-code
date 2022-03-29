@@ -60,7 +60,7 @@ public class ViewDelegate<T extends View> {
     /** 背景图 **/
     protected final SimpleLiveData<Drawable> mBackground = new SimpleLiveData<>();
     /** 背景资源 **/
-    protected final SimpleLiveData<Integer> mBackgroundRes = new SimpleLiveData<>();
+    protected final SimpleLiveData<Integer> mBackgroundResource = new SimpleLiveData<>();
 
     public ViewDelegate(Fragment fragment) {
         mFragment = fragment;
@@ -74,70 +74,10 @@ public class ViewDelegate<T extends View> {
         mHandler.post(() -> mActivity.getLifecycle().addObserver((LifecycleEventObserver) this::onStateChanged));
     }
 
-    protected void onStateChanged(@NonNull LifecycleOwner owner, @NonNull Lifecycle.Event event) {
-        if (event == Lifecycle.Event.ON_CREATE) {
-            onCreate(owner);
-        } else if (event == Lifecycle.Event.ON_DESTROY) {
-            onDestroy(owner);
-        }
-    }
-
-    protected void onCreate(@NonNull LifecycleOwner owner) {
-        mView.observe(owner, v -> post(() -> {}));
-        // 控件显示状态监听
-        mVisibility.observe(owner, aInt -> post(() -> requireView().setVisibility(aInt)));
-        // 宽度变化监听
-        mWidth.observe(owner, aFloat -> post(() -> {
-            ViewGroup.LayoutParams params = requireView().getLayoutParams();
-            if (params == null) {
-                params = new ViewGroup.LayoutParams(aFloat.intValue(), -2);
-            }
-            params.width = aFloat.intValue();
-            requireView().setLayoutParams(params);
-        }));
-        // 高度变化监听
-        mHeight.observe(owner, aFloat -> post(() -> {
-            ViewGroup.LayoutParams params = requireView().getLayoutParams();
-            if (params == null) {
-                params = new ViewGroup.LayoutParams(-2, aFloat.intValue());
-            }
-            params.height = aFloat.intValue();
-            requireView().setLayoutParams(params);
-        }));
-        // 设置背景变化监听
-        mBackground.observe(owner, drawable -> post(() -> {
-            View v = mView.getValue();
-            assert v != null;
-            if (drawable == null) {
-                // 不设置背景
-                ViewCompat.setBackground(v, null);
-            } else if (drawable instanceof ColorDrawable) {
-                // 纯色背景设置圆角
-                int color = ((ColorDrawable) drawable).getColor();
-                GradientDrawable background = new GradientDrawable();
-                background.setColor(color);
-                background.setCornerRadii(mBackgroundRadii);
-                ViewCompat.setBackground(v, background);
-            } else {
-                // 图片背景设置圆角
-                RoundDrawable background = new RoundDrawable(drawable);
-                background.setRadii(mBackgroundRadii, SizeUnit.PX);
-                ViewCompat.setBackground(v, background);
-            }
-        }));
-        // 设置背景资源变化监听
-        mBackgroundRes.observe(owner, aInt -> {
-            Drawable drawable = ContextCompat.getDrawable(Utils.getContext(), aInt);
-            mBackground.setValue(drawable);
-        });
-    }
-
-    protected void onDestroy(@NonNull LifecycleOwner owner) {
-
-    }
+    protected void onStateChanged(@NonNull LifecycleOwner owner, @NonNull Lifecycle.Event event) {}
 
     @NonNull
-    public LifecycleOwner getLifecycle() {
+    public LifecycleOwner getLifecycleOwner() {
         if (mFragment != null) {
             return mFragment;
         } else {
@@ -162,7 +102,56 @@ public class ViewDelegate<T extends View> {
     }
 
     public void setView(T view) {
-        mView.setValue(view);
+        if (view == null) {
+            return;
+        }
+        LifecycleOwner owner = getLifecycleOwner();
+        // 控件显示状态监听
+        mVisibility.observe(owner, view::setVisibility);
+        // 宽度变化监听
+        mWidth.observe(owner, aFloat ->  {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            if (params == null) {
+                params = new ViewGroup.LayoutParams(aFloat.intValue(), -2);
+            }
+            params.width = aFloat.intValue();
+            view.setLayoutParams(params);
+        });
+        // 高度变化监听
+        mHeight.observe(owner, aFloat -> {
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            if (params == null) {
+                params = new ViewGroup.LayoutParams(-2, aFloat.intValue());
+            }
+            params.height = aFloat.intValue();
+            view.setLayoutParams(params);
+        });
+        // 设置背景变化监听
+        mBackground.observe(owner, drawable -> post(() -> {
+            View v = mView.getValue();
+            assert v != null;
+            if (drawable == null) {
+                // 不设置背景
+                ViewCompat.setBackground(v, null);
+            } else if (drawable instanceof ColorDrawable) {
+                // 纯色背景设置圆角
+                int color = ((ColorDrawable) drawable).getColor();
+                GradientDrawable background = new GradientDrawable();
+                background.setColor(color);
+                background.setCornerRadii(mBackgroundRadii);
+                ViewCompat.setBackground(v, background);
+            } else {
+                // 图片背景设置圆角
+                RoundDrawable background = new RoundDrawable(drawable);
+                background.setRadii(mBackgroundRadii, SizeUnit.PX);
+                ViewCompat.setBackground(v, background);
+            }
+        }));
+        // 设置背景资源变化监听
+        mBackgroundResource.observe(owner, aInt -> {
+            Drawable drawable = ContextCompat.getDrawable(Utils.getContext(), aInt);
+            mBackground.setValue(drawable);
+        });
     }
 
     public void setPadding(float left, float top, float right, float bottom) {
@@ -308,8 +297,8 @@ public class ViewDelegate<T extends View> {
         mBackground.setValue(new ColorDrawable(color));
     }
 
-    public void setBackgroundRes(@DrawableRes int resId) {
-        mBackgroundRes.setValue(resId);
+    public void setBackgroundResource(@DrawableRes int resId) {
+        mBackgroundResource.setValue(resId);
     }
 
     /**
@@ -326,18 +315,6 @@ public class ViewDelegate<T extends View> {
             }
             mActions.clear();
         }
-    }
-
-    /**
-     * 获取绑定的控件
-     */
-    @NonNull
-    protected T requireView() {
-        T view = mView.getValue();
-        if (view == null) {
-            throw new RuntimeException("You should call setView(LifecycleOwner, View) first.");
-        }
-        return view;
     }
 
 }

@@ -7,7 +7,6 @@ import android.util.TypedValue;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -41,19 +40,21 @@ public class TextViewDelegate extends ViewDelegate<TextView> {
     }
 
     @Override
-    protected void onCreate(@NonNull LifecycleOwner owner) {
-        super.onCreate(owner);
-        // 设置文本变化监听
-        mText.observe(owner, charSequence -> post(() -> requireView().setText(charSequence)));
-        mTextRes.observe(owner, aInt -> post(() -> requireView().setText(aInt)));
+    public void setView(TextView view) {
+        super.setView(view);
+        LifecycleOwner owner = getLifecycleOwner();
+        // 设置文本监听
+        mText.observe(owner, view::setText);
+        // 设置文本资源监听
+        mTextRes.observe(owner, view::setText);
         // 设置文本颜色变化监听
-        mTextColor.observe(owner, colorStateList -> post(() -> requireView().setTextColor(colorStateList)));
+        mTextColor.observe(owner, view::setTextColor);
         // 设置文本大小变化监听
-        mTextSize.observe(owner, aInt -> post(() -> requireView().setTextSize(TypedValue.COMPLEX_UNIT_PX, aInt)));
+        mTextSize.observe(owner, aInt -> view.setTextSize(TypedValue.COMPLEX_UNIT_PX, aInt));
         // 设置文本样式变化监听
-        mTextStyle.observe(owner, aBoolean -> post(() -> requireView().setTypeface(Typeface.defaultFromStyle(aBoolean))));
+        mTextStyle.observe(owner, aBoolean -> view.setTypeface(Typeface.defaultFromStyle(aBoolean)));
         // 设置文本位置变化监听
-        mGravity.observe(owner, aInt -> post(() -> requireView().setGravity(aInt)));
+        mGravity.observe(owner, view::setGravity);
     }
 
     public void setText(@StringRes int resId) {
